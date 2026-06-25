@@ -1,0 +1,121 @@
+:root{
+    --border-colour:rgba(245, 245, 245, 0.116);
+}
+
+.message-wrapper{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    max-width: 100%;
+    white-space: wrap;
+    padding: 0.2cm 0.2cm;
+    margin-bottom: 0.5cm;
+    border-radius: 0.15cm;
+    transition: 0.1s;
+    /* border: 0.2mm solid red; */
+}
+
+
+
+
+
+
+/* ================ */
+/*   Message Main   */
+/* ================ */
+
+.message-main{
+    /* border: 0.2mm solid red; */
+    position: relative;
+    max-width: 60%;
+    min-width: 10cm;
+    white-space: wrap;
+    overflow: hidden;
+    word-break: keep-all;
+    padding: 0.2cm 0.2cm;
+    border-radius: 0.15cm;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+.message-main::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(to right, rgba(255, 0, 0, 0)70%, rgba(255, 255, 255, 0.05), rgba(0, 0, 255, 0));
+    filter: brightness(2.5);
+    width: 100%;
+    height: 100%;
+    transform: translateX(-100%) rotate(5deg);
+    transition: 0.5s;
+    z-index: 0;
+    overflow: hidden;
+
+}
+.message-main:hover::before{
+        transform: translateX(100%);
+}
+
+
+
+/* ================ */
+/* Message Actions */
+/* ================ */
+
+.user-message-actions{
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    /* border: 0.2mm solid red; */
+    height: 1cm;
+}
+
+
+.system-message-actions{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /* border: 0.2mm solid red; */
+    height: 1cm;
+}
+
+
+.message-action-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0mm solid rgba(255, 255, 255, 0.308);
+    background-color: rgb(45, 58, 79);
+    padding: 0.2cm;
+    margin-right: 0.2cm;
+    border-radius: 0.1cm;
+    cursor: pointer;
+}
+.message-action-btn:hover{
+    background-color: rgb(64, 82, 111);
+}
+
+
+/* ================ */
+/*  User Message    */
+/* ================ */
+.user-message{
+    align-self: flex-end;
+    border: 0.1mm solid var(--border-colour);
+    background-color: rgb(32, 42, 60);
+    background: linear-gradient(to right, rgb(33, 39, 51) , rgb(17, 28, 50));
+}
+
+
+
+
+/* ================ */
+/* System Message */
+/* ================ */
+.system-message{
+    align-self: flex-start;
+    border: 0.1mm solid var(--border-colour);
+    background-color: rgb(30, 31, 32);
+}

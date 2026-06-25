@@ -1,0 +1,60 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+
+::-webkit-scrollbar {
+    width: 6px;           /* Vertical scrollbar width */
+    height: 6px;          /* Horizontal scrollbar height */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;        /* Or #f1f1f1 for very light bg */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;               /* Darker thumb */
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;               /* Darker on hover */
+}
+
+/* Optional: Make it even more minimal / chat-like */
+::-webkit-scrollbar-thumb:active {
+    background: #333;
+}
+
+/* For dark mode chat interfaces (recommended) */
+body.dark ::-webkit-scrollbar-thumb,
+.chat-container ::-webkit-scrollbar-thumb {
+    background: #666;
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover,
+.chat-container ::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
