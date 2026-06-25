@@ -4,8 +4,9 @@ import { thunk } from "redux-thunk";
 
 import ChatMessagesReducer from "./reducers/ChatMessagesReducer";
 import ChatDisplayReducer from "./reducers/ChatDisplay";
+import NavigationReducer from "./reducers/NavigationReducer";
 
-const combineReducer=combineReducers({ChatMessagesReducer, ChatDisplayReducer})
+const combineReducer=combineReducers({ChatMessagesReducer, ChatDisplayReducer, NavigationReducer})
 
 const store = createStore(combineReducer,{},applyMiddleware(thunk))
 

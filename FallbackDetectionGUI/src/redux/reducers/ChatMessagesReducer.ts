@@ -1,7 +1,5 @@
 interface MessageTypes{
     turn_rank:Array<number>,
-    current_query:string,
-    response:string,
     prev_queries:Array<string>,
     prev_responses:Array<string>,
     reason:Array<string>,
@@ -19,7 +17,7 @@ interface actionTypes{
 }
 
 
-let initialState:MessageTypes={turn_rank:[1],prev_queries:[],prev_responses:[],current_query:'',response:'',reason:[],confidence_score:[]}
+let initialState:MessageTypes={turn_rank:[1],prev_queries:[],prev_responses:[],reason:[],confidence_score:[]}
 
 const ChatMessagesReducer=(state:MessageTypes=initialState,action:actionTypes)=>{
     let data=null

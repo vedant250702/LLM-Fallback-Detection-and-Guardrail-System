@@ -1,0 +1,155 @@
+/* ============================================================ */
+/*   EMPTY CHAT — Blaze Orange / White / Charcoal Theme         */
+/* ============================================================ */
+
+.empty-chat-main {
+  user-select: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5cm;
+  padding: 1cm 0.8cm;
+  text-align: center;
+  animation: empty-chat-fadein 0.6s ease forwards;
+}
+
+@keyframes empty-chat-fadein {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+
+/* ============================================================ */
+/*   Orb                                                         */
+/* ============================================================ */
+
+.empty-chat-orb {
+  position: relative;
+  width: 1.6cm;
+  height: 1.6cm;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2e2e2e, #1a1a1a);
+  border: 1px solid rgba(255, 107, 1, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 0 6px rgba(255, 107, 1, 0.06),
+    0 0 0 12px rgba(255, 107, 1, 0.03),
+    0 0 30px rgba(255, 107, 1, 0.25);
+  animation: empty-chat-orb-pulse 3s ease-in-out infinite;
+}
+
+@keyframes empty-chat-orb-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 6px rgba(255, 107, 1, 0.06),
+      0 0 0 12px rgba(255, 107, 1, 0.03),
+      0 0 30px rgba(255, 107, 1, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px rgba(255, 107, 1, 0.1),
+      0 0 0 18px rgba(255, 107, 1, 0.04),
+      0 0 50px rgba(255, 107, 1, 0.35);
+  }
+}
+
+.empty-chat-orb-icon {
+  font-size: 0.75cm;
+  background: linear-gradient(135deg, #ff6b01, #ffaa55);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  user-select: none;
+}
+
+
+/* ============================================================ */
+/*   Text Block                                                  */
+/* ============================================================ */
+
+.empty-chat-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18cm;
+  max-width: 10cm;
+}
+
+.empty-chat-title {
+  font-size: 0.6cm;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  background: linear-gradient(125deg, #ff6b01 10%, #ffffff 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.empty-chat-subtitle {
+  font-size: 0.3cm;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.7;
+  margin: 0;
+}
+
+
+/* ============================================================ */
+/*   Suggestion Chips                                            */
+/* ============================================================ */
+
+.empty-chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.18cm;
+  justify-content: center;
+  max-width: 12cm;
+}
+
+.empty-chat-chip {
+  padding: 0.14cm 0.32cm;
+  border-radius: 20px;
+  font-size: 0.27cm;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  background: #2a2a2a;
+  border: 1px solid rgba(255, 107, 1, 0.2);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.empty-chat-chip:hover {
+  color: #ffffff;
+  background: rgba(255, 107, 1, 0.12);
+  border-color: rgba(255, 107, 1, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(255, 107, 1, 0.2);
+}
+
+
+/* ============================================================ */
+/*   Bottom Hint                                                 */
+/* ============================================================ */
+
+.empty-chat-hint {
+  font-size: 0.25cm;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 107, 1, 0.35);
+  margin: 0;
+  animation: empty-chat-hint-bob 2.5s ease-in-out infinite;
+}
+
+@keyframes empty-chat-hint-bob {
+  0%, 100% { transform: translateY(0);   opacity: 0.5; }
+  50%       { transform: translateY(3px); opacity: 1;   }
+}

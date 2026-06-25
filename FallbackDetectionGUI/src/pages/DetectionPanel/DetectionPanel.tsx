@@ -1,6 +1,8 @@
 import { DetectionData } from "../../types/DetectionData";
 import "./DetectionPanel.css";
-
+import { BiAnalyse } from "react-icons/bi";
+import { useDispatch } from "react-redux";
+import { FaWindowClose } from "react-icons/fa";
 
 export default function DetectionPanel() {
 
@@ -11,6 +13,9 @@ export default function DetectionPanel() {
         {/* 1. Header */}
         <div className="dp-header">
           <span className="dp-title">Fallback Analysis</span>
+          <span className="analysis-button-mobile">
+            <AnalysisDrawerIcon/>
+          </span>
         </div>
 
         {/* 2. Status Badge + Confidence Bar */}
@@ -91,4 +96,13 @@ const ScoresBlock:React.FC=()=>{
       </div>
     </div>
   );
+}
+
+const AnalysisDrawerIcon:React.FC=()=>{
+  const dispatch=useDispatch()
+  return(
+    <span className='chat-panel-analysis-icon' onClick={()=>{dispatch({type:"toggle analysis panel"})}}>
+      <FaWindowClose />
+    </span>
+  )
 }

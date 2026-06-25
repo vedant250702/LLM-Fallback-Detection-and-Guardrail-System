@@ -1,5 +1,5 @@
 :root {
-  --border-colour: rgba(245, 245, 245, 0.116);
+  --border-colour: rgba(255, 255, 255, 0.08);
 }
 
 .message-wrapper {
@@ -26,7 +26,6 @@
   word-break: keep-all;
   padding: 0.2cm 0.2cm;
   border-radius: 0.15cm;
-  overflow: hidden;
   cursor: pointer;
   transition: 0.1s;
 }
@@ -36,7 +35,12 @@
   position: absolute;
   left: 0;
   top: 0;
-  background: linear-gradient(to right, rgba(16, 185, 129, 0) 70%, rgba(110, 231, 183, 0.06), rgba(251, 191, 36, 0));
+  background: linear-gradient(
+    to right,
+    rgba(255, 107, 1, 0) 70%,
+    rgba(255, 133, 51, 0.07),
+    rgba(255, 255, 255, 0)
+  );
   filter: brightness(2.5);
   width: 100%;
   height: 100%;
@@ -71,16 +75,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 0mm solid rgba(255, 255, 255, 0.308);
-  background-color: #0f2318;
+  border: 0mm solid rgba(255, 255, 255, 0.08);
+  background-color: #2e2e2e;
   padding: 0.2cm;
   margin-right: 0.2cm;
   border-radius: 0.1cm;
   cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .message-action-btn:hover {
-  background-color: #163d25;
+  background-color: #3d3d3d;
+  color: #ff6b01;
 }
 
 /* ================ */
@@ -88,8 +95,9 @@
 /* ================ */
 .user-message {
   align-self: flex-end;
-  border: 0.1mm solid var(--border-colour);
-  background: linear-gradient(to right, #0c2016, #091a10);
+  border: 0.1mm solid rgba(255, 107, 1, 0.2);
+  background: linear-gradient(to right, #2e2e2e, #353535);
+  color: #ffffff;
 }
 
 /* ================ */
@@ -98,5 +106,6 @@
 .system-message {
   align-self: flex-start;
   border: 0.1mm solid var(--border-colour);
-  background-color: #090e0c;
+  background-color: #272727;
+  color: rgba(255, 255, 255, 0.6);
 }

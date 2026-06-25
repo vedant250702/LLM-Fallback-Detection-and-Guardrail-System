@@ -4,32 +4,20 @@ import axios from 'axios'
 import "./ChatPanel.css"
 import { BsLayoutSidebarInset } from "react-icons/bs";
 import { FaArrowUp } from "react-icons/fa6";
+import { BiAnalyse } from "react-icons/bi";
 import UserMessage from '../../components/ChatComponents/Message/UserMessage';
 import SystemMessage from '../../components/ChatComponents/Message/SystemMessage';
 import { useDispatch, useSelector } from 'react-redux';
+import EmptyChat from '../../components/ChatComponents/EmptyChat/EmptyChat';
 
 
 
 const ChatPanel:React.FC = () => {
-
-  const [Test, setTest] = useState<Array<number>>([]);
-
   const [message, setMessage] = useState('');
 
   const dispatch=useDispatch()
   const selector:any=useSelector((state:any)=>state.ChatMessagesReducer)
   const components_selector=useSelector((state:any)=>state.ChatDisplayReducer)
-
-  useEffect(()=>{
-    let arr=[]
-    for(let i=0;i<2;i++){
-      arr.push(i)
-    } 
-    
-    console.log(components_selector)
-    setTest(arr)
-  },[])
-
 
 
 
@@ -76,13 +64,17 @@ const ChatPanel:React.FC = () => {
         <div className='chat-panel-header-section'>
           <HeadingDrawerIcon/>
           <HeadingText/>
+          <div className='chat-panel-header-right-corner'>
+            <AnalysisDrawerIcon/>
+          </div>
+
         </div>
 
 
         {/* MESSAGE SECTION WHERE ALL THE MESSAGES WILL BE APPENDED */}
         <div className='chat-panel-message-section'>
           <div className='chat-panel-message-sub-section'>
-
+          {components_selector.messages.length==0 && <EmptyChat/>}
           {components_selector.messages.map((val:any)=>(
               <>
                 {val.role=="user"?
@@ -126,13 +118,22 @@ const HeadingText:React.FC=()=>{
 }
 
 const HeadingDrawerIcon:React.FC=()=>{
+    const dispatch=useDispatch()
   return(
-    <span className='chat-panel-drawer-icon'>
+    <span className='chat-panel-drawer-icon' onClick={()=>{dispatch({type:"toggle drawer panel"})}}>
       <BsLayoutSidebarInset />
     </span>
   )
 }
 
+const AnalysisDrawerIcon:React.FC=()=>{
+  const dispatch=useDispatch()
+  return(
+    <span className='chat-panel-analysis-icon' onClick={()=>{dispatch({type:"toggle analysis panel"})}}>
+      <BiAnalyse />
+    </span>
+  )
+}
 
 
 interface InputSectionTypes{
