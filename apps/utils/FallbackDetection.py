@@ -108,9 +108,13 @@ class FallbackAttentionModel(nn.Module):
         return logits
 
 
-class MountModel:
+class ClassificationModel:
     def __init__(self):
         self.model=None
+
+    #  Formatting into the shape that will get into the input of an model.
+    def formatInputs(self):
+        pass
 
     def predict(self):
         pass

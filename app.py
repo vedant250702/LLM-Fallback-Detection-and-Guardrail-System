@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apps.routes.query_routes import router
+import dotenv
 
+dotenv.load_dotenv()
 app=FastAPI()
 
 

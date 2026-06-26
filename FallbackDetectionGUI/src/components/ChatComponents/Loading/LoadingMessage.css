@@ -1,0 +1,23 @@
+.loading-message {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.3cm 0.4cm;
+  min-width: unset; /* override the 10cm min-width for this one */
+}
+
+.loading-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #555;
+  animation: loading-bounce 1.2s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes loading-bounce {
+  0%, 100% { transform: translateY(0);    opacity: 0.3; }
+  50%       { transform: translateY(-4px); opacity: 1;   }
+}

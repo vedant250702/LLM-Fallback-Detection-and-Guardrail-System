@@ -9,11 +9,13 @@ import UserMessage from '../../components/ChatComponents/Message/UserMessage';
 import SystemMessage from '../../components/ChatComponents/Message/SystemMessage';
 import { useDispatch, useSelector } from 'react-redux';
 import EmptyChat from '../../components/ChatComponents/EmptyChat/EmptyChat';
+import LoadingMessage from '../../components/ChatComponents/Loading/LoadingMessage';
 
 
 
 const ChatPanel:React.FC = () => {
   const [message, setMessage] = useState('');
+  const [isLoading, setisLoading] = useState(false)
 
   const dispatch=useDispatch()
   const selector:any=useSelector((state:any)=>state.ChatMessagesReducer)
@@ -34,10 +36,11 @@ const ChatPanel:React.FC = () => {
 
       dispatch({type:"add chat component",payload:{role:"user",message:message}})
       setMessage('')
-
+      setisLoading(true)
       await axios.post(import.meta.env.VITE_APP_BASEURL+"/api/query/llm_call",data)
       .then((response)=>{
           // Updating the storage for the Response
+          setisLoading(false)
           dispatch({type:"update new response", payload:response.data})
 
           // Adding the Message Component for the response of the LLM
@@ -85,7 +88,7 @@ const ChatPanel:React.FC = () => {
               </>
             ))
           }
-
+          {isLoading && <LoadingMessage />}
           
 
           </div>

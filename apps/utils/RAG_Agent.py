@@ -16,11 +16,11 @@ import os
 from tenacity import retry, wait_exponential, stop_after_attempt
 
 
-api_key = os.environ["MISTRAL_APIKEY"]
+
 
 
 class RAGPipelineCareerGuidance:
-    def __init__(self, embeddings, directory="./career_rag_index"):
+    def __init__(self, embeddings, directory="./career_rag_index",api_key=''):
         # Embedding Model
         self.embeddings = embeddings
 
@@ -126,6 +126,6 @@ class RAGPipelineCareerGuidance:
         return result
 
     # For generating the training datapoints (context + response)
-    def generateResponsesForTraining(self, question, prev_queries, prev_responses):
+    def generateResponses(self, question, prev_queries, prev_responses):
         history = self.format_history(prev_queries, prev_responses)
         return self.safe_invoke(question=question, history=history) 

@@ -34,8 +34,9 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888;               /* Darker thumb */
+    background: #ca4700;               /* Darker thumb */
     border-radius: 10px;
+    border: 0.01mm solid #de550b;
     transition: background 0.2s ease;
 }
 
