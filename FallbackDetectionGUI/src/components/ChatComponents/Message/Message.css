@@ -109,3 +109,34 @@
   background-color: #272727;
   color: rgba(255, 255, 255, 0.6);
 }
+
+.system-message-analyze-btn{
+  padding: 0.1cm 0.3cm;
+  user-select: none;
+}
+
+.system-message-analyze-btn:active{
+  background-color: #2d2d2d;
+}
+
+@media only screen and (max-device-width:700px) {
+  
+  .message-wrapper {
+    max-width: 100%;          /* ← added */
+    width: 100%;              /* ← added */
+    box-sizing: border-box;
+    padding: 0.2cm;
+    /* border: 0.2mm solid red; */
+  }
+
+  .message-main {
+    min-width: unset;         /* ← removes the 10cm forcing overflow */
+    max-width: 85%;           /* ← leaves breathing room on edges */
+    width: fit-content;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    box-sizing: border-box;
+}
+}

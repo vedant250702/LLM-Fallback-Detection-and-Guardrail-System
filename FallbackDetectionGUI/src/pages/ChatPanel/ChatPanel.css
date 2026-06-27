@@ -489,7 +489,7 @@
 
 }
 
-@media only screen and (max-device-width:650px){
+@media only screen and (max-device-width:950px){
         .chat-panel-name {
         transform: scale(0.75);
         margin-left: -0.75cm;
@@ -507,5 +507,6 @@
           /* border: 0.2mm solid red; */
           margin-left: -0.7cm;
       }
+
 
 }

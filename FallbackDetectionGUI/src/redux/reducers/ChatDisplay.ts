@@ -1,9 +1,5 @@
 // This Reducer is specfically used for storing the React Functional Components in the Array.
 
-import React from "react"
-
-
-
 interface actionTypes{
     type:string,
     payload:{

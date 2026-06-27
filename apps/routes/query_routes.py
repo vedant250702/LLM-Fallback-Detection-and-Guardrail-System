@@ -28,3 +28,15 @@ def api_call(request:ModelsInputs):
     reason="This is the particular reason"
     confidence_score=0.56
     return {"status":True, "response":answers["answer"], "reason":reason, "confidence_score":confidence_score, "current_query":request.current_query}
+
+
+
+class AnalysisModel(BaseModel):
+    turn_rank:int
+    current_query:str
+    prev_queries:list[str] | None
+    prev_responses:list[str] | None
+
+@router.post("/llm-analysis")
+def analyze(request):
+    return {"status":True}

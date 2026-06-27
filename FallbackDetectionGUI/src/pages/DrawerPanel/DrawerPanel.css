@@ -9,14 +9,14 @@
     top: 0;
     left: 0;
     overflow: hidden;
-    transition: 0.5s;
+    transition: 1.25s;
 
 }
 
 .drawer-background-active{
     width: 100%;
     animation-name: drawer-background-animation;
-    animation-duration: 2s;
+    animation-duration: 1.5s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     animation-delay: 0.5s;
@@ -44,7 +44,7 @@
   left: 0;
   user-select: none;
   overflow: hidden;
-  transition: 0.9s;
+  transition: 1.5s;
   white-space: nowrap;
   z-index: 4;
 }
@@ -370,8 +370,12 @@
 
 
 
-@media only screen and (max-device-width:950px) {
+@media only screen and (max-device-width:700px) {
     .drawer-main-panel-active{
         width: 100%;
+    }
+    .drawer-background-active{
+        width: 100%;
+        animation-name: none;
     }
 }

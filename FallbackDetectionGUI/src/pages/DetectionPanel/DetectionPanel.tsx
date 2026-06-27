@@ -3,8 +3,23 @@ import "./DetectionPanel.css";
 import { BiAnalyse } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { FaWindowClose } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
+
 
 export default function DetectionPanel() {
+
+  const chat_selector:any=useSelector((state:any)=>state.ChatMessagesReducer)
+  const navigation_selector:any=useSelector((state:any)=>state.NavigationReducer)
+  const analysis_selector:any=useSelector((state:any)=>state.AnalysisReducer)
+
+
+
+  useEffect(()=>{
+
+  },[])
+
 
   return (
     <>
@@ -17,25 +32,27 @@ export default function DetectionPanel() {
             <AnalysisDrawerIcon/>
           </span>
         </div>
+          {analysis_selector.analysis_turn_rank_number!=null&&
+            <>
+              {/* 2. Status Badge + Confidence Bar */}
+              <StatusSection score={analysis_selector.analysis_turn_rank_number}/>
 
-        {/* 2. Status Badge + Confidence Bar */}
-        <StatusSection score={70}/>
+              {/* 3. Query */}
+              <InfoBlock label="📌 Current Query" text={chat_selector.prev_queries[Number(analysis_selector.analysis_turn_rank_number)-1]} />
 
-        {/* 3. Query */}
-        <InfoBlock label="📌 Current Query" text="" />
+              {/* 4. Retrieved Context */}
+              <InfoBlock label="📄 Retrieved Context" text="" />
 
-        {/* 4. Retrieved Context */}
-        <InfoBlock label="📄 Retrieved Context" text="" />
+              {/* 5. Generated Response */}
+              {/* <InfoBlock label="🤖 Generated Response" text="" /> */}
 
-        {/* 5. Generated Response */}
-        <InfoBlock label="🤖 Generated Response" text="" />
+              {/* 6. Reason */}
+              <ReasonBlock text={analysis_selector.collection[analysis_selector.analysis_turn_rank_number].reason}/>
 
-        {/* 6. Reason */}
-        <ReasonBlock />
-
-        {/* 7. Similarity Scores */}
-        <ScoresBlock />
-
+              {/* 7. Similarity Scores */}
+              <ScoresBlock />
+            </>
+          }
       </div>
     </>
   )
@@ -77,12 +94,14 @@ const InfoBlock:React.FC<InfoBlockTypes>=({label,text})=>{
 }
 
 
-
-const ReasonBlock:React.FC=()=>{
+interface ReasonBlockType{
+  text:string
+}
+const ReasonBlock:React.FC<ReasonBlockType>=({text})=>{
   return (
     <div className="dp-reason-block">
       <p className="dp-info-label">⚠️ Reason</p>
-      <p className="dp-info-text"></p>
+      <p className="dp-info-text">{text}</p>
     </div>
   );
 }
@@ -101,7 +120,7 @@ const ScoresBlock:React.FC=()=>{
 const AnalysisDrawerIcon:React.FC=()=>{
   const dispatch=useDispatch()
   return(
-    <span className='chat-panel-analysis-icon' onClick={()=>{dispatch({type:"toggle analysis panel"})}}>
+    <span className='chat-panel-analysis-icon' onClick={()=>{dispatch({type:"toggle analysis panel",payload:null})}}>
       <FaWindowClose />
     </span>
   )

@@ -78,12 +78,12 @@ const ChatPanel:React.FC = () => {
         <div className='chat-panel-message-section'>
           <div className='chat-panel-message-sub-section'>
           {components_selector.messages.length==0 && <EmptyChat/>}
-          {components_selector.messages.map((val:any)=>(
+          {components_selector.messages.map((val:any, index:number)=>(
               <>
                 {val.role=="user"?
-                  <UserMessage message={val.message}/>
+                  <UserMessage message={val.message} turn_rank={index+1}/>
                 :val.role=="system"&&
-                  <SystemMessage message={val.message}/>
+                  <SystemMessage message={val.message} turn_rank={(index+1)/2}/>
                 }
               </>
             ))
@@ -132,7 +132,7 @@ const HeadingDrawerIcon:React.FC=()=>{
 const AnalysisDrawerIcon:React.FC=()=>{
   const dispatch=useDispatch()
   return(
-    <span className='chat-panel-analysis-icon' onClick={()=>{dispatch({type:"toggle analysis panel"})}}>
+    <span className='chat-panel-analysis-icon' onClick={()=>{dispatch({type:"toggle analysis panel",payload:null})}}>
       <BiAnalyse />
     </span>
   )

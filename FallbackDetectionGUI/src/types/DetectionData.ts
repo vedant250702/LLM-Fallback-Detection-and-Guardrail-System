@@ -10,4 +10,5 @@ export interface DetectionData{
 
 export interface MessageType{
   message:string
+  turn_rank:number | null
 }
