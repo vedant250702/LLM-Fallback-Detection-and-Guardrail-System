@@ -2,11 +2,14 @@ from langchain_core.messages import SystemMessage,HumanMessage
 from langchain_mistralai import ChatMistralAI
 from langchain_groq import ChatGroq
 import time
+import re
+import pandas as pd
 
 import os
 from tenacity import retry,wait_exponential,stop_after_attempt
 
-api_key=os.environ["MISTRAL_APIKEY"]
+
+DEFAULT_MODEL_NAME="mistral-medium-2505"
 
 PROMPTS={
     "arbiter_model":{
@@ -304,6 +307,7 @@ PROMPTS={
 
     "fallback_behaviour_signal":{
             "system":"""
+
                 You are a strict data labeling engine specialized in evaluating AI assistant
                 responses for fallback behavior quality.
 
@@ -508,7 +512,7 @@ PROMPTS={
                 </scratchpad>
                 <label>Bad fallback behavior</label>
                 <confidence>0.93</confidence>
-                <borderline>No</borderline>
+                <reason>The response fabricates a certification level structure (ACU/ACP), specific coverage areas, and software compatibility, none of which appear in the retrieved context, and presents these as fact without any acknowledgment of uncertainty.</reason>
 
                 ---------------------------------------------------------------------
                 EXAMPLE 2 — Mixed fallback behavior
@@ -560,7 +564,7 @@ PROMPTS={
                 </scratchpad>
                 <label>Mixed fallback behavior</label>
                 <confidence>0.85</confidence>
-                <borderline>No</borderline>
+                <reason>The response correctly grounds HTML, CSS, JavaScript, and Git in the retrieved context, but adds A/B testing frameworks and agile project management experience which are not mentioned anywhere in the context and are presented without any disclaimer.</reason>
 
                 ---------------------------------------------------------------------
                 EXAMPLE 3 — Correct fallback behavior
@@ -614,7 +618,7 @@ PROMPTS={
                 </scratchpad>
                 <label>Correct fallback behavior</label>
                 <confidence>0.97</confidence>
-                <borderline>No</borderline>
+                <reason>All three salary figures stated in the response (average, less experienced, and highly experienced ranges) are directly and explicitly supported by matching passages in the retrieved context, with no fabricated or unsupported claims.</reason>
 
                 =====================================================================
                 EVALUATION STEPS (perform in scratchpad for every input)
@@ -673,7 +677,7 @@ PROMPTS={
                 </scratchpad>
                 <label>Exactly one of: Bad fallback behavior / Mixed fallback behavior / Correct fallback behavior</label>
                 <confidence>0.00–1.00</confidence>
-                <borderline>Yes / No</borderline>
+                <reason>A concise 4-5 sentence explanation of why this label was assigned, written for an end user. Reference the specific claims, grounding status, or admission behavior that determined the label. Do not restate the full scratchpad — summarize the key deciding factor only.</reason>
                 """,
             "user":"""
                 Conversation History:
@@ -696,7 +700,7 @@ PROMPTS={
 
 
 class LabellingJudge:
-    def __init__(self,model_name):
+    def __init__(self,model_name, api_key):
 
         # self.llm=ChatMistralAI(
         #     api_key=api_key,
@@ -750,3 +754,150 @@ class LabellingJudge:
             )
 
         return fallback_behaviour_label
+
+
+#---------------------------------------------------------------
+# Analysis Components which are required for the deep analysis |
+#---------------------------------------------------------------
+
+class AnalysisComponents:
+    """Container for labelling / parsing utilities used in the analysis pipeline."""
+ 
+    def __init__(self, model_name=DEFAULT_MODEL_NAME,api_key=''):
+        # `judge` should be an object exposing generateLabels(...), used by `labelling`.
+        self.judge = LabellingJudge(model_name=DEFAULT_MODEL_NAME, api_key=api_key)
+ 
+    def labelling(self, x, index, unsupported_claims=None, first_prompt=True):
+        try:
+            query = x["current_query"]
+            context = x["retrieved_context"]
+            prev_queries = x["prev_queries_total"]
+            prev_responses = x["prev_responses_total"]
+            llm_response = x["response"]
+            return self.judge.generateLabels(
+                question=query,
+                context=context,
+                prev_queries=prev_queries,
+                prev_responses=prev_responses,
+                response=llm_response,
+                unsupported_claims=unsupported_claims,
+                first_prompt=first_prompt,
+            )
+
+        except Exception:
+            # return None, None, None, None
+            return None
+ 
+    def parse_label(self, response_text: str) -> tuple:
+        label = re.search(r"<label>(.*?)</label>", response_text, re.DOTALL)
+        confidence = re.search(
+            r"<confidence>(.*?)</confidence>", response_text, re.DOTALL
+        )
+        reason = re.search(
+            r"<reason>(.*?)</reason>", response_text, re.DOTALL
+        )
+        scratchpad = re.search(
+            r"<scratchpad>(.*?)</scratchpad>", response_text, re.DOTALL
+        )
+ 
+        scratchpad = scratchpad.group(1).strip() if scratchpad else ""
+        label = label.group(1).strip() if label else "PARSE_ERROR"
+        confidence = float(confidence.group(1).strip()) if confidence else None
+        reason = reason.group(1).strip() if reason else None
+ 
+        return label, scratchpad, confidence, reason
+ 
+    def parse_stage2(self, raw):
+        label = re.search(r"<final_label>(.*?)</final_label>", raw, re.DOTALL)
+        confidence = re.search(r"<confidence>(.*?)</confidence>", raw, re.DOTALL)
+        reason = re.search(r"<reason>(.*?)</reason>", raw, re.DOTALL)
+        scratchpad = re.search(r"<scratchpad>(.*?)</scratchpad>", raw, re.DOTALL)
+ 
+        label = label.group(1).strip() if label else None
+        confidence = float(confidence.group(1).strip()) if confidence else None
+        reason = reason.group(1).strip() if reason else None
+        scratchpad = scratchpad.group(1).strip() if scratchpad else None
+ 
+        return label, scratchpad, confidence, reason
+ 
+    def extract_step2_unsupported(self, scratchpad_text):
+        # Extract Step 2 block — matches "Claim Grounding" header variations
+        step2_match = re.search(
+            r"Step\s*2\s*[-–]\s*Claim\s*Grounding[:\s]*(.*?)(?=Step\s*3|$)",
+            scratchpad_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if not step2_match:
+            return "No Step 2 found"
+ 
+        step2_text = step2_match.group(1)
+ 
+        # Extract UNSUPPORTED lines
+        # Using upper() to handle any encoding variation of the word
+        unsupported_lines = [
+            line.strip()
+            for line in step2_text.split("\n")
+            if "UNSUPPORTED" in line.upper() and line.strip().startswith("-")
+        ]
+ 
+        return (
+            "\n".join(unsupported_lines)
+            if unsupported_lines
+            else "None — all claims supported"
+        )
+
+
+    def save_to_csv(self,data):
+        data_path="./apps/storage/realtime_data/realtime_data.csv"
+        if os.path.exists(data_path):
+            df=pd.read_csv(data_path)
+            df2=pd.DataFrame(data)
+            df=pd.concat([df,df2],axis=0)
+        else:
+            df=pd.DataFrame(data)
+        df.to_csv(data_path)
+
+    def AnalyzeContent(self,input_data,turn_rank):
+        result_dict = {
+            "fallback_behaviour_label": "",
+            "fallback_behaviour_scratchpad": "",
+            "fallback_behaviour_confidence": "",
+            "fallback_behaviour_borderline": "",
+            "arbiter_label": "",
+            "arbiter_scratchpad": "",
+            "arbiter_confidence": "",
+            "arbiter_reason": "",
+            "final_label": ""
+        }
+
+        response= self.labelling(input_data,turn_rank,True)
+        label, scratchpad, confidence, reason= self.parse_label(response)
+        
+        result_dict["fallback_behaviour_label"] = label
+        result_dict["fallback_behaviour_scratchpad"] = scratchpad
+        result_dict["fallback_behaviour_confidence"] = confidence
+        result_dict["fallback_behaviour_borderline"] = reason
+
+    
+        if label=="Correct fallback behavior":
+            label="not fallback"
+        elif label=="Bad fallback behavior":
+            label="fallback"
+
+        if label=="Mixed fallback behavior":
+            response=self.labelling(input_data, turn_rank, self.extract_step2_unsupported(scratchpad) ,False)
+            label, scratchpad, confidence, reason = self.parse_stage2(response)
+
+        result_dict["arbiter_label"] = label
+        result_dict["arbiter_scratchpad"] = scratchpad
+        result_dict["arbiter_confidence"] = confidence
+        result_dict["arbiter_reason"] = reason
+        result_dict["final_label"] = "not fallback" if "not fallback" in label else "fallback"
+
+        input_data.update(result_dict)
+        self.save_to_csv(input_data)
+
+        return label, scratchpad, reason
+
+
+            

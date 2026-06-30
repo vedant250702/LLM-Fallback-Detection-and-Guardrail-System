@@ -10,6 +10,7 @@ const SystemMessage:React.FC<MessageType>=({message,turn_rank})=>{
     const [copied, setCopied] = useState(false);
     const dispatch=useDispatch()
     const selector=useSelector((state:any)=>state.AnalysisReducer)
+    const chat_selector=useSelector((state:any)=>state.ChatMessagesReducer)
   
     const handleCopy = () => {
       navigator.clipboard.writeText(message);
@@ -19,30 +20,39 @@ const SystemMessage:React.FC<MessageType>=({message,turn_rank})=>{
 
     const analyze=async()=>{
       dispatch({type:"toggle analysis loading",payload:true})
-      dispatch({type:"toggle analysis panel",payload:true})
+      setTimeout(() => {
+        dispatch({type:"current turn_rank",payload:turn_rank})
+        dispatch({type:"toggle analysis panel",payload:true})
+      }, 50);
 
       let data=Object.keys(selector.collection)
       if(turn_rank){
         if (turn_rank in data){
-          dispatch({type:"current turn_rank",payload:turn_rank})
           dispatch({type:"toggle analysis loading",payload:false})
         }else{
-          let payload={reason:'This is the reason',  turn_rank:turn_rank, confidence_score:0.56}
-          dispatch({type:'add analysis information',payload:payload})
-          dispatch({type:"current turn_rank",payload:turn_rank})
-          dispatch({type:"toggle analysis loading",payload:false})
-          // await axios.post(import.meta.env.VITE_APP_BASEURL+"/api/llm-analysis")
-          // .then((response)=>{
 
-          //   dispatch({type:"toggle analysis loading",payload:false})
-          // })
-          // .catch((err)=>{
+          let prev_history_length=chat_selector.prev_queries.length
 
-          // })
+          let data={turn_rank:Number(turn_rank),
+                    current_query:chat_selector.prev_queries[Number(turn_rank)-1],
+                    response:message,
+                    context:chat_selector.context[Number(turn_rank)-1],
+                    prev_queries:chat_selector.prev_queries.slice(0,prev_history_length-1),
+                    prev_responses:chat_selector.prev_responses.slice(0,prev_history_length-1),
+                    label:chat_selector.category[Number(turn_rank)-1]
+          }
+
+          await axios.post(import.meta.env.VITE_APP_BASEURL+"/api/query/llm_analysis",data)
+          .then((response)=>{
+              let payload={reason:response.data.reason,  turn_rank:turn_rank, steps:response.data.steps}
+              dispatch({type:'add analysis information',payload:payload})
+              dispatch({type:"toggle analysis loading",payload:false})
+          })
+          .catch((err)=>{
+            console.log(err)
+          })
         }
       }
-
-
     }
   
   return(

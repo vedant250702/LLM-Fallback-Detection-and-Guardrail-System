@@ -36,6 +36,9 @@ DEFAULT_EMBEDDER_NAME = "intfloat/e5-base-v2"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+#----------------------------------------------------------------------
+# # Neural Network Architecture which was used for training the Model.|           
+#----------------------------------------------------------------------
 class FallbackAttentionModel(nn.Module):
     def __init__(self, embed_dim=EMBED_DIM, num_tokens=NUM_TOKENS,
                  num_heads=NUM_HEADS, num_layers=NUM_LAYERS,
@@ -88,6 +91,11 @@ class FallbackAttentionModel(nn.Module):
         logits = self.classifier(combined)
         return logits
 
+
+
+#--------------------------------------------------------------------------------------------------------------------------------------
+# Classification Model all the preprocessing steps which involves schema, generating embeddings and also making the final predictions.|           |
+#--------------------------------------------------------------------------------------------------------------------------------------
 class ClassificationModel:
     """
     A class for loading the trained fallback detection model and making predictions.
@@ -215,9 +223,10 @@ class ClassificationModel:
                 return preds.tolist()
             
 
-
+#------------------------------------------------------------------------------
+# Formatting the Input for feeding to the Classification Model.               |
+#------------------------------------------------------------------------------
 def FormatModelClassificationInput(query, response, retrieved_context, turn_rank, prev_queries, prev_responses):
-    page_contents = [data.page_content for data in retrieved_context]
     sample = {
         "current_query": query,
         "llm_response": response,
@@ -240,8 +249,8 @@ def FormatModelClassificationInput(query, response, retrieved_context, turn_rank
     }
 
     txt="retrieved_context_"
-    for i in range(0,len(page_contents)):
-        sample[txt+f"{i+1}"]=page_contents[i]
+    for i in range(0,len(retrieved_context)):
+        sample[txt+f"{i+1}"]=retrieved_context[i]
 
     txt="conversation_last_"
     for i in range(0,min([8,len(prev_queries)])):

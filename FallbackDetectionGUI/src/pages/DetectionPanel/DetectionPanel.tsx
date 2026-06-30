@@ -32,26 +32,31 @@ export default function DetectionPanel() {
             <AnalysisDrawerIcon/>
           </span>
         </div>
-          {analysis_selector.analysis_turn_rank_number!=null&&
+          {analysis_selector.analysis_turn_rank_number!=null?
             <>
               {/* 2. Status Badge + Confidence Bar */}
-              <StatusSection score={chat_selector.confidence_score[Number(analysis_selector.analysis_turn_rank_number-1)]} category={chat_selector.category[Number(analysis_selector.analysis_turn_rank_number-1)]}/>
+              <StatusSection score={chat_selector.confidence_score[Number(analysis_selector.analysis_turn_rank_number)-1]} category={chat_selector.category[Number(analysis_selector.analysis_turn_rank_number)-1]}/>
 
               {/* 3. Query */}
               <InfoBlock label="📌 Current Query" text={chat_selector.prev_queries[Number(analysis_selector.analysis_turn_rank_number)-1]} />
+              {!navigation_selector.analysis_loading&&
+                <>
+                  {/* 4. Retrieved Context */}
+                  {/* <InfoBlock label="📄 Retrieved Context" text={chat_selector.context[Number(analysis_selector.analysis_turn_rank_number)-1]} /> */}
 
-              {/* 4. Retrieved Context */}
-              <InfoBlock label="📄 Retrieved Context" text="" />
+                  {/* 5. Generated Response */}
+                  {/* <InfoBlock label="🤖 Generated Response" text="" /> */}
 
-              {/* 5. Generated Response */}
-              {/* <InfoBlock label="🤖 Generated Response" text="" /> */}
+                  {/* 6. Reason */}
+                  <ReasonBlock text={analysis_selector.collection[analysis_selector.analysis_turn_rank_number].reason}/>
 
-              {/* 6. Reason */}
-              <ReasonBlock text={analysis_selector.collection[analysis_selector.analysis_turn_rank_number].reason}/>
-
-              {/* 7. Similarity Scores */}
-              <ScoresBlock />
+                  {/* 7. Similarity Scores */}
+                  <ScoresBlock />
+                </>
+              }
             </>
+          :
+          <EmptyAnalysisPage/>
           }
       </div>
     </>
@@ -124,5 +129,30 @@ const AnalysisDrawerIcon:React.FC=()=>{
     <span className='chat-panel-analysis-icon' onClick={()=>{dispatch({type:"toggle analysis panel",payload:null})}}>
       <FaWindowClose />
     </span>
+  )
+}
+
+
+const EmptyAnalysisPage:React.FC=()=>{
+  return(
+    <>
+    <div className="ea-wrapper">
+      <div className="ea-icon-ring">
+        <div className="ea-icon-glow" />
+          <BiAnalyse size={28} className="ea-icon" />
+        </div>
+
+      <p className="ea-title">No Turn Selected</p>
+      <p className="ea-sub">
+        Click on any message in the conversation to inspect its fallback
+        analysis, confidence score, and similarity breakdown.
+      </p>
+
+      <div className="ea-hint">
+        <span className="ea-hint-dot" />
+        <span className="ea-hint-text">Awaiting selection</span>
+      </div>
+    </div>
+    </>
   )
 }

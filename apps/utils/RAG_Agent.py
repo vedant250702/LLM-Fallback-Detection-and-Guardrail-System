@@ -46,7 +46,7 @@ class RAGPipelineCareerGuidance:
         self.llm=ChatMistralAI(
             api_key=api_key,
             model="mistral-small-2603",
-            temperature=0,
+            temperature=0.6,
             max_tokens=1024
         )
 
@@ -128,4 +128,8 @@ class RAGPipelineCareerGuidance:
     # For generating the training datapoints (context + response)
     def generateResponses(self, question, prev_queries, prev_responses):
         history = self.format_history(prev_queries, prev_responses)
-        return self.safe_invoke(question=question, history=history) 
+        return self.safe_invoke(question=question, history=history)
+    
+
+
+

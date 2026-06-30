@@ -45,7 +45,7 @@ const ChatPanel:React.FC = () => {
 
           // Adding the Message Component for the response of the LLM
           dispatch({type:"add chat component",payload:{role:"system",message:response.data.response}})
-
+          console.log(selector)
       })
       .catch((err)=>{
         console.log(err)
