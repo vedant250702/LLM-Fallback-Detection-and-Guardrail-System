@@ -3,7 +3,8 @@ interface MessageTypes{
     current_query:string,
     prev_queries:Array<string>,
     prev_responses:Array<string>,
-    confidence_score:Array<number>
+    confidence_score:Array<number>,
+    category:Array<number>
 }
 
 interface actionTypes{
@@ -12,12 +13,13 @@ interface actionTypes{
         current_query:string,
         reason:string, 
         confidence_score:number,
-        response:string
+        response:string,
+        category:number
     }
 }
 
 
-let initialState:MessageTypes={turn_rank:[1],prev_queries:[],prev_responses:[],current_query:'',confidence_score:[]}
+let initialState:MessageTypes={turn_rank:[1],prev_queries:[],prev_responses:[],current_query:'',confidence_score:[],category:[]}
 
 const ChatMessagesReducer=(state:MessageTypes=initialState,action:actionTypes)=>{
     let data=null
@@ -31,7 +33,8 @@ const ChatMessagesReducer=(state:MessageTypes=initialState,action:actionTypes)=>
                     prev_queries:[...state.prev_queries, data.current_query], 
                     prev_responses:[...state.prev_responses, data.response],
                     confidence_score:[...state.confidence_score, data.confidence_score],
-                    current_query:''
+                    current_query:'',
+                    category:[...state.category,data.category]
                 }
             return state
 
