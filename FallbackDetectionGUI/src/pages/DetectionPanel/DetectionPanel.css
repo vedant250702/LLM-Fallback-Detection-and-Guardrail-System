@@ -48,6 +48,8 @@
   );
   position: relative;
   overflow: hidden;
+  min-height: 1.5cm;
+
 }
 
 .dp-header::after {
@@ -69,6 +71,10 @@
 
 .analysis-button-mobile{
   display: none;
+}
+
+.dp-analysis-section{
+  /* border: 0.2mm solid red; */
 }
 
 
@@ -198,6 +204,14 @@
   margin-top: 6px;
 }
 
+.dp-loading-panel{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 0.2mm solid red;    */
+  width: 100%;
+  height: 100%;
+}
 
 
 

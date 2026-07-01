@@ -44,7 +44,7 @@
 /* ====================================== */
 .chat-panel-header-section {
   border-bottom: 1px solid rgba(255, 107, 1, 0.18);
-  height: 2cm;
+  min-height: 2cm;
   padding: 0.22cm 0.45cm;
   display: flex;
   flex-direction: row;

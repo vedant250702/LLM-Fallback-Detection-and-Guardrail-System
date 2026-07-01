@@ -4,7 +4,7 @@ from langchain_groq import ChatGroq
 import time
 import re
 import pandas as pd
-
+import traceback
 import os
 from tenacity import retry,wait_exponential,stop_after_attempt
 
@@ -753,13 +753,13 @@ class LabellingJudge:
                 PROMPTS["arbiter_model"]["user"].format(history=history,query=question,response=response,context=context, unsupported_claims=unsupported_claims)
             )
 
+
         return fallback_behaviour_label
 
 
 #---------------------------------------------------------------
 # Analysis Components which are required for the deep analysis |
 #---------------------------------------------------------------
-
 class AnalysisComponents:
     """Container for labelling / parsing utilities used in the analysis pipeline."""
  
@@ -768,12 +768,12 @@ class AnalysisComponents:
         self.judge = LabellingJudge(model_name=DEFAULT_MODEL_NAME, api_key=api_key)
  
     def labelling(self, x, index, unsupported_claims=None, first_prompt=True):
-        try:
+        # try:
             query = x["current_query"]
             context = x["retrieved_context"]
             prev_queries = x["prev_queries_total"]
             prev_responses = x["prev_responses_total"]
-            llm_response = x["response"]
+            llm_response = x["llm_response"]
             return self.judge.generateLabels(
                 question=query,
                 context=context,
@@ -784,9 +784,10 @@ class AnalysisComponents:
                 first_prompt=first_prompt,
             )
 
-        except Exception:
+        # except Exception:
+        #     print(traceback.print_exc())
             # return None, None, None, None
-            return None
+            # return None
  
     def parse_label(self, response_text: str) -> tuple:
         label = re.search(r"<label>(.*?)</label>", response_text, re.DOTALL)
@@ -849,15 +850,20 @@ class AnalysisComponents:
 
     def save_to_csv(self,data):
         data_path="./apps/storage/realtime_data/realtime_data.csv"
+        data["retrieved_context"]= str(data['retrieved_context'])
+        data["prev_queries_total"]= str(data['prev_queries_total'])
+        data["prev_responses_total"]= str(data['prev_responses_total'])
+
         if os.path.exists(data_path):
             df=pd.read_csv(data_path)
-            df2=pd.DataFrame(data)
+            df2=pd.DataFrame([data])
             df=pd.concat([df,df2],axis=0)
         else:
-            df=pd.DataFrame(data)
-        df.to_csv(data_path)
+            df=pd.DataFrame([data])
+        df.to_csv(data_path,index=False)
 
     def AnalyzeContent(self,input_data,turn_rank):
+        print("Judge 1 Labelling")
         result_dict = {
             "fallback_behaviour_label": "",
             "fallback_behaviour_scratchpad": "",
@@ -871,6 +877,7 @@ class AnalysisComponents:
         }
 
         response= self.labelling(input_data,turn_rank,True)
+        # print("Label respone : ",response)
         label, scratchpad, confidence, reason= self.parse_label(response)
         
         result_dict["fallback_behaviour_label"] = label
@@ -878,21 +885,24 @@ class AnalysisComponents:
         result_dict["fallback_behaviour_confidence"] = confidence
         result_dict["fallback_behaviour_borderline"] = reason
 
-    
+  
         if label=="Correct fallback behavior":
             label="not fallback"
         elif label=="Bad fallback behavior":
             label="fallback"
+        result_dict["final_label"]=label
 
         if label=="Mixed fallback behavior":
+            print("Judge 2 Labelling")
             response=self.labelling(input_data, turn_rank, self.extract_step2_unsupported(scratchpad) ,False)
             label, scratchpad, confidence, reason = self.parse_stage2(response)
 
-        result_dict["arbiter_label"] = label
-        result_dict["arbiter_scratchpad"] = scratchpad
-        result_dict["arbiter_confidence"] = confidence
-        result_dict["arbiter_reason"] = reason
-        result_dict["final_label"] = "not fallback" if "not fallback" in label else "fallback"
+            result_dict["arbiter_label"] = label
+            result_dict["arbiter_scratchpad"] = scratchpad
+            result_dict["arbiter_confidence"] = confidence
+            result_dict["arbiter_reason"] = reason
+            label= "not fallback" if "not fallback" in label else "fallback"
+            result_dict["final_label"] = label
 
         input_data.update(result_dict)
         self.save_to_csv(input_data)

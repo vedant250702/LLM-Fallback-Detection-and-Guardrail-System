@@ -1,0 +1,60 @@
+.loading-main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /* border: 0.2mm solid red; */
+    width: 4cm;
+    height: 4cm;
+ 
+}
+
+.loading-icon {
+    /* Base track uses Dark Gray (#353535) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1cm;
+    box-shadow: 0px 0px 15px 6px #ff560197;
+
+    border: 2mm solid #353535;
+
+    /* Highlighted spinning parts use Orange (#FF6B01) */
+    border-top: 2mm solid #FF6B01;
+    border-bottom: 2mm solid #ff5a01;
+    
+    width: 2cm;
+    height: 2cm;
+    border-radius: 5cm;
+    margin-bottom: 0.2cm;
+
+    /* White background to ensure the dark/light contrast is perfect */
+    background-color: #ffffff00;
+
+    /* Adds the spinning animation */
+    animation: spin 1s linear infinite;
+}
+
+
+
+
+.loading-main b{
+    background: linear-gradient(to right, #f0efef 80%, #ff5e01);
+    background-clip: text;
+    background-size: 200% 100%;
+    color: transparent;
+    animation-name: analysis_text_animation;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes analysis_text_animation {
+    0%   { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+
+/* Keyframes for the rotation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { FaWindowClose } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Loading from "../../components/Loading/Loading";
 
 
 
@@ -32,6 +33,8 @@ export default function DetectionPanel() {
             <AnalysisDrawerIcon/>
           </span>
         </div>
+
+        <div className="dp-analysis-section">
           {analysis_selector.analysis_turn_rank_number!=null?
             <>
               {/* 2. Status Badge + Confidence Bar */}
@@ -39,25 +42,33 @@ export default function DetectionPanel() {
 
               {/* 3. Query */}
               <InfoBlock label="📌 Current Query" text={chat_selector.prev_queries[Number(analysis_selector.analysis_turn_rank_number)-1]} />
-              {!navigation_selector.analysis_loading&&
+              {!navigation_selector.analysis_loading?
                 <>
                   {/* 4. Retrieved Context */}
                   {/* <InfoBlock label="📄 Retrieved Context" text={chat_selector.context[Number(analysis_selector.analysis_turn_rank_number)-1]} /> */}
 
-                  {/* 5. Generated Response */}
-                  {/* <InfoBlock label="🤖 Generated Response" text="" /> */}
-
+                  {/* 5. LLM Label */}
+                  <InfoBlock label="LLM Judge Label" text={String(analysis_selector.collection[String(parseInt(analysis_selector.analysis_turn_rank_number))].llm_label).toUpperCase()} />
+                  
                   {/* 6. Reason */}
-                  <ReasonBlock text={analysis_selector.collection[analysis_selector.analysis_turn_rank_number].reason}/>
+                  <ReasonBlock text={analysis_selector.collection[String(parseInt(analysis_selector.analysis_turn_rank_number))].reason}/>
 
+                  {/* 7. Steps */}
+                  <InfoBlock label="Analysis Steps" text={analysis_selector.collection[String(parseInt(analysis_selector.analysis_turn_rank_number))].steps} /> 
                   {/* 7. Similarity Scores */}
                   <ScoresBlock />
                 </>
+              :
+                <div className="dp-loading-panel">
+                  <Loading/>
+                </div>  
               }
             </>
           :
           <EmptyAnalysisPage/>
           }
+                  
+        </div>
       </div>
     </>
   )

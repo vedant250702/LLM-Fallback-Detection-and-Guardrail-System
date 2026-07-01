@@ -82,9 +82,9 @@ def analyze(request:AnalysisModel):
         "question_type":"",
         "labels":request.label
     }
+    print(request.turn_rank)
+    label, scratchpad, reason=deep_analyze.AnalyzeContent(data,request.turn_rank)
+    # label, scratchpad, reason= "1","2","3"
 
-    # label, scratchpad, reason=deep_analyze.AnalyzeContent(data,request.turn_rank)
-    label, scratchpad, reason= "1","2","3"
-    print(data)
 
     return {"status":True,"reason":reason, "steps":scratchpad, "llm_label":label}

@@ -24,7 +24,7 @@ const ChatPanel:React.FC = () => {
 
 
   const handleSend = async() => {
-    if (message.trim()) {
+    if (message.trim() && !isLoading) {
       // Here you would send the message to your chat logic
       let turn_rank=selector.turn_rank
       let data={
